@@ -1,0 +1,58 @@
+<resources>
+    <string name="app_name">EDA News</string>
+
+    <string name="vision">Our vision</string>
+    <string name="vision_details">The School of Engineering and Digital Arts is recognised both for the quality and impact of its research and the exciting range of undergraduate and postgraduate opportunities on offer.  Forward-looking and culturally diverse, the synergy between our research and teaching is key to the quality of our education provision.
+
+Established over 40 years ago, the School of Engineering and Digital Arts has developed a top-quality teaching and research base, receiving excellent ratings in both research and teaching assessments.
+
+Our students benefit from an environment which supports world-class research and excellent teaching. We have an enviable track record of achievement in enterprise-led activity including nurturing strong partnerships with academic and industrial organisations in the UK, Europe and worldwide.
+
+We are committed to developing employable, ethical and responsible graduates. We strive to impact positively on contemporary issues, recognising that the unique blend of technological and design expertise within the School is at the forefront of the needs of 21st-century society.</string>
+    <string name="support">Supportive student environment</string>
+    <string name="support_details">As a School we are relatively small and this ensures that staff and students work in a friendly environment, offering an inspiring and challenging student experience.
+
+The innovative nature of our programmes allows you to fully explore the boundaries of engineering, technology and digital media while using your imagination to express your knowledge and creativity.</string>
+    <string name="sota">State-of-the-art facilities</string>
+    <string name="sota_details">We provide an excellent environment for your studies making it easy for you to access the resources you need to fulfil your potential.  At the School of Engineering and Digital Arts you have access to the very latest, state-of-the-art facilities synonymous with a successful research university. Our excellent technical support and facilities play a vital role in our teaching and our research.
+
+The School is equipped with cutting-edge resources, equipment and facilities. These include four air-conditioned computer suites, 120-seat engineering laboratory, professional CAD development software, PCB and surface-mount facilities, mechanical workshop, Matlab for system modelling, 3Dmd 3d imaging scanner, VICON Infrared Motion Capture System, anechoic chamber and antenna characterisation.
+
+We also have the latest versions of professional software packages such as Photoshop, Dreamweaver, Premiere Pro, After Effects, Maya, Unit3D and 3ds Max.</string>
+    <string name="teaching">Inspirational teaching</string>
+    <string name="teaching_details">Taught by staff with both academic and industrial experience, our innovative programmes are based on leading-edge research topics, vital in a field that advances so quickly. They combine theory with practical and project work, so that you turn ideas into real systems and designs.
+
+You benefit from a diverse range of teaching, both in terms of research interests and professional backgrounds.  Lecturers include academics with years of experience in university teaching and research, and industry practitioners with extensive commercial experience.</string>
+    <string name="research">Research excellence</string>
+    <string name="research_details">The School of Engineering and Digital Arts high-quality topical research has had significant national and international impact, and our expertise allows us to respond rapidly to new developments.  We consistently win funding from UK research councils, European research programmes and government agencies.
+
+In the most recent Research Excellence Framework (REF), research by the School of Engineering and Digital Arts was ranked 21st in the UK for research intensity.  Our 30 academic staff and over 130 postgraduate students and research staff support a high level of research activity. We have a thriving student population studying in a friendly, supportive teaching and research environment.
+
+We promote innovative and interdisciplinary research and host three research groups:
+
+Communications
+Instrumentation, Control and Embedded Systems
+Intelligent Interactions</string>
+    <string name="prospects">Impressive prospects</string>
+    <string name="prospects_details">The School of Engineering and Digital Arts equips you with the essential skills for a successful career. As well as enhancing your professional skills, we also develop your transferable skills such as communication, teamwork, problem-solving and computer literacy.
+
+As the fields of computer technology, telecommunications and consumer electronics evolve rapidly, our graduates have found employment in varied careers such as developing the next generation of mobile telephones, creating animated human models and employing computer-based techniques in a hospital environment.  Many graduates also extend their studies by registering for MSc and PhD programmes.
+
+Our digital technology graduates have found employment in graphic design, 3D modelling and animation, multimedia marketing, post-production, web development, computer programming, e-commerce, software development and telecommunications.
+
+We have an Employability Officer who has developed a programme of seminars on employability, workshops and opportunities to meet with employers and gain work experience. Our links with business locally, nationally and internationally provide excellent year in industry opportunities. We also hold events within the School where you can meet potential employers and our Digital Media Hub gives our digital media students the chance to gain real-world commercial experience.</string>
+    <string name="recognition">Professional recognition</string>
+    <string name="recognition_details">A kite mark of our global distinction and rigorous academic teaching is reflected in our accreditation from the Institution of Engineering and Technology (IET), under licence from the UK regulator, the Engineering Council. Our accreditation is a mark of assurance that the degree meets the standards set by the Engineering Council in the UK Standard for Professional Engineering Competence (UK-SPEC).
+
+An accredited degree provides you with some or all of the underpinning knowledge, understanding and skills for eventual registration as an Incorporated (IEng) or Chartered Engineer (CEng).  Some employers recruit preferentially from accredited degrees and an accredited degree is likely to be recognised by other countries that are signatories to international accords. Our programmes in Computer Systems Engineering and Electronic and Communications Engineering provide a broad grounding in these fields.
+
+Engineering Programmes at Kent have been continuously accredited by the IET for over 30 years. The School of Engineering and Digital Arts is an IET Academic Partner.
+
+The School has several visiting industrial professors who contribute to the strong industrial relevance of our programmes.</string>
+    <string name="gold">GOLD in the Teaching Excellence Framework, the highest possible rating.</string>
+    <string name="rank">Design Studies at Kent was ranked 7th in The Complete University Guide 2019.</string>
+    <string name="graduate">95% of graduates in 2017 who responded to the Destinations of Leavers from Higher Education survey were in work or further study within six months.</string>
+    <string name="research_quality">97% of research at Kent was found to be of international quality in the most recent research rankings (REF 2014).</string>
+    <string name="about">The School of Engineering and Digital Arts successfully combines modern engineering and technology with the exciting field of digital media – a blend of expertise that is particularly well suited to the needs of 21st-century business.</string>
+
+</resources>
