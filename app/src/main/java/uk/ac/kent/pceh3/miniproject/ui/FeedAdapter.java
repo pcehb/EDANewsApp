@@ -8,13 +8,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.github.abdularis.piv.VerticalScrollParallaxImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.kent.pceh3.miniproject.model.Articles;
-import uk.ac.kent.pceh3.miniproject.model.Feed;
 import uk.ac.kent.pceh3.miniproject.R;
 
 /**
@@ -23,26 +23,31 @@ import uk.ac.kent.pceh3.miniproject.R;
 
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder>{
     public class ViewHolder extends RecyclerView.ViewHolder{
-        private TextView fullName;
-        private TextView phoneNumber;
-        private ImageView photo;
+        private TextView title;
+        private TextView desc;
+        private TextView date;
+        private VerticalScrollParallaxImageView photo;
 
 
         public ViewHolder(View itemView) {
             super(itemView);
-            fullName = (TextView) itemView.findViewById(R.id.full_name);
-            phoneNumber = (TextView) itemView.findViewById(R.id.phone_number);
-            photo = (ImageView) itemView.findViewById(R.id.photo);
+            title = (TextView) itemView.findViewById(R.id.article_title);
+            desc = (TextView) itemView.findViewById(R.id.article_desc);
+            date = (TextView) itemView.findViewById(R.id.date);
+            photo = (VerticalScrollParallaxImageView) itemView.findViewById(R.id.photo);
 
             itemView.setOnClickListener(itemCLickListener);
+
         }
 
         public void setData(Articles articles, int position) {
 
-            fullName.setText(articles.getTitle());
-            phoneNumber.setText(articles.getDescription());
+            title.setText(articles.getTitle());
+            desc.setText(articles.getDescription());
+            date.setText(articles.getDateTime());
             Picasso.get()
                     .load(articles.getImageUrl())
+                    .placeholder(R.drawable.newspaper)
                     .into(photo);
             itemView.setTag(position);
         }

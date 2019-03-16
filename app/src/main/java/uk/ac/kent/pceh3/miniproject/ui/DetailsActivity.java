@@ -13,7 +13,6 @@ import java.util.List;
 
 import uk.ac.kent.pceh3.miniproject.R;
 import uk.ac.kent.pceh3.miniproject.model.Articles;
-import uk.ac.kent.pceh3.miniproject.model.Feed;
 
 
 public class DetailsActivity extends AppCompatActivity {
@@ -28,8 +27,8 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-        name=(TextView) findViewById(R.id.full_name);
-        phoneNumber=(TextView) findViewById(R.id.phone_number);
+        name=(TextView) findViewById(R.id.article_title);
+        phoneNumber=(TextView) findViewById(R.id.article_desc);
         photo=(ImageView) findViewById(R.id.contact_photo);
 
         viewModel = ViewModelProviders.of(this).get(FeedViewModel.class);

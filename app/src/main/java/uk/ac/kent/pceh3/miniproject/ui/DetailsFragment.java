@@ -18,7 +18,6 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import uk.ac.kent.pceh3.miniproject.model.Articles;
-import uk.ac.kent.pceh3.miniproject.model.Feed;
 import uk.ac.kent.pceh3.miniproject.R;
 
 
@@ -50,8 +49,8 @@ public class DetailsFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_details, container, false);
 
-        name=(TextView) view.findViewById(R.id.full_name);
-        phoneNumber=(TextView) view.findViewById(R.id.phone_number);
+        name=(TextView) view.findViewById(R.id.article_title);
+        phoneNumber=(TextView) view.findViewById(R.id.article_desc);
         photo=(ImageView) view.findViewById(R.id.contact_photo);
 
         viewModel = ViewModelProviders.of((FragmentActivity) getActivity()).get(FeedViewModel.class);
