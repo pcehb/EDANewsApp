@@ -14,6 +14,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import uk.ac.kent.pceh3.miniproject.model.Article;
 import uk.ac.kent.pceh3.miniproject.model.Articles;
 import uk.ac.kent.pceh3.miniproject.model.Feed;
 
@@ -78,6 +79,30 @@ public class FeedsRepository {
         });
 
         return articles;
+    }
+
+    // Retrieve list of feed articles
+    public LiveData<Article> getArticle(String url) {
+        final MutableLiveData<Article> data = new MutableLiveData<>();
+        // Get the HTTP call
+        Call<Article> call = feedsService.getArticle(url);
+        // Initiate network call in the background
+        networkStatus.setValue(NetworkStatus.LOADING);
+        call.enqueue(new Callback<Article>() {
+            @Override
+            public void onResponse(Call<Article> call, Response<Article> response) {
+                data.setValue(response.body());
+                networkStatus.setValue(NetworkStatus.IDLE);
+            }
+            @Override
+            public void onFailure(Call<Article> call, Throwable t) {
+                System.out.println(t.getMessage());
+                networkStatus.setValue(NetworkStatus.IDLE);
+                // Handle failure
+            }
+        });
+
+        return data;
     }
 
 }

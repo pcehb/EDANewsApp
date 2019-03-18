@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModel;
 
 import java.util.List;
 
+import uk.ac.kent.pceh3.miniproject.model.Article;
 import uk.ac.kent.pceh3.miniproject.model.Articles;
 import uk.ac.kent.pceh3.miniproject.network.FeedsRepository;
 
@@ -17,6 +18,7 @@ public class FeedViewModel extends ViewModel {
 
     private LiveData<List<Articles>> feedList;
 
+    private MutableLiveData<Integer> selectedFeed= new MutableLiveData<Integer>();
 
     public MutableLiveData<Integer> getSelectedFeed() {
         return selectedFeed;
@@ -26,10 +28,7 @@ public class FeedViewModel extends ViewModel {
         selectedFeed.setValue(position);
     }
 
-    private MutableLiveData<Integer> selectedFeed= new MutableLiveData<Integer>();
-
     public LiveData<List<Articles>> getFeedList() {
-
         if (feedList == null) {
         // Load from server
             feedList = FeedsRepository.getInstance().getFeedList();
@@ -37,6 +36,16 @@ public class FeedViewModel extends ViewModel {
         return feedList;
     }
 
+    private LiveData<Article> articleLiveData;
+
+    public LiveData<Article> getArticle(String url) {
+        System.out.println(articleLiveData);
+        if (articleLiveData == null) {
+            // Load from server
+            articleLiveData = FeedsRepository.getInstance().getArticle(url);
+        }
+        return articleLiveData;
+    }
 
 
     public LiveData<FeedsRepository.NetworkStatus> getNetworkStatus(){

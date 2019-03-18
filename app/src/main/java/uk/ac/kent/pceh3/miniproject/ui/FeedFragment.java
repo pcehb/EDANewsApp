@@ -15,7 +15,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +35,7 @@ public class FeedFragment extends Fragment implements FragmentManager.OnBackStac
     private FeedAdapter adapter;
     private FeedViewModel viewModel;
     private ProgressBar progressBar;
-
+    private String articleUrl;
 
     private final Observer<List<Articles>> feedsListObserver = new Observer<List<Articles>>(){
         @Override
@@ -52,7 +56,17 @@ public class FeedFragment extends Fragment implements FragmentManager.OnBackStac
     private final Observer<Integer> selectedObserver = new Observer<Integer>(){
         @Override
         public void onChanged(Integer position){
-                showDetailsFragment();
+            List<Articles> articles = viewModel.getFeedList().getValue();
+            if (articles == null)
+                return;
+
+            Articles article = articles.get(position);
+            articleUrl = article.getArticleUrl();
+
+            Intent intent = new Intent(getActivity(), DetailsActivity.class);
+            intent.putExtra("articleUrl", articleUrl);
+
+            startActivity(intent);
         }
     };
 
@@ -81,6 +95,7 @@ public class FeedFragment extends Fragment implements FragmentManager.OnBackStac
         getFragmentManager().popBackStack();
         return true;
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -118,12 +133,6 @@ public class FeedFragment extends Fragment implements FragmentManager.OnBackStac
         }
 
         return view;
-    }
-
-    private void showDetailsFragment(){
-        Intent intent = new Intent(getActivity(), DetailsActivity.class);
-        startActivity(intent);
-
     }
 
     public void shouldDisplayHomeUp(){

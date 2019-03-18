@@ -1,63 +1,91 @@
 package uk.ac.kent.pceh3.miniproject.ui;
 
+import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.squareup.picasso.Picasso;
 
+import java.util.Arrays;
 import java.util.List;
 
 import uk.ac.kent.pceh3.miniproject.R;
-import uk.ac.kent.pceh3.miniproject.model.Articles;
+import uk.ac.kent.pceh3.miniproject.model.Article;
+import uk.ac.kent.pceh3.miniproject.network.FeedsRepository;
 
 
 public class DetailsActivity extends AppCompatActivity {
 
-    private TextView name;
-    private TextView phoneNumber;
+    private TextView title;
+    private TextView desc;
     private ImageView photo;
+    private ProgressBar progressBar;
     private FeedViewModel viewModel;
+    private String articleUrl;
+
+    private final Observer<Article> articleObserver = new Observer<Article>(){
+        @Override
+        public void onChanged(Article Article){
+            updateData(Article);
+        }
+    };
+
+    private final Observer<FeedsRepository.NetworkStatus> networkStatusObserver = new Observer<FeedsRepository.NetworkStatus>(){
+        @Override
+        public void onChanged(FeedsRepository.NetworkStatus networkStatus){
+            if(networkStatus == FeedsRepository.NetworkStatus.LOADING)
+                progressBar.setVisibility(View.VISIBLE);
+            else progressBar.setVisibility(View.GONE);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_details);
+        Intent intent = getIntent();
+        articleUrl = intent.getStringExtra("articleUrl");
 
-        name=(TextView) findViewById(R.id.article_title);
-        phoneNumber=(TextView) findViewById(R.id.article_desc);
-        photo=(ImageView) findViewById(R.id.contact_photo);
+        setContentView(R.layout.activity_details);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE);
 
         viewModel = ViewModelProviders.of(this).get(FeedViewModel.class);
-        viewModel.getSelectedFeed().observe(this, selectedObserver);
-    }
+
+        viewModel.getArticle(articleUrl).observe(this, articleObserver);
+        viewModel.getNetworkStatus().observe(this, networkStatusObserver);
 
 
-    private final Observer<Integer> selectedObserver = new Observer<Integer>(){
-        @Override
-        public void onChanged(Integer position){
-            System.out.println("Clicked");
-            updateView(position);
+        Article data = viewModel.getArticle(articleUrl).getValue();
+        if (data != null){
+            updateData(data);
         }
-    };
+        else{
 
-
-
-    private  void updateView (int position){
-        List<Articles> articles = viewModel.getFeedList().getValue();
-        if (articles == null)
-            return;
-        Articles article = articles.get(position);
-
-        name.setText(article.getTitle());
-        phoneNumber.setText(article.getDescription());
-        Picasso.get()
-                .load(article.getImageUrl())
-                .into(photo);
+        }
     }
 
+    public void updateData(Article data){
+        title=(TextView) findViewById(R.id.article_title);
+        desc=(TextView) findViewById(R.id.article_desc);
+        photo=(ImageView) findViewById(R.id.toolbarImage);
+
+        title.setText(data.getTitle());
+        desc.setText(Arrays.toString(data.getContent()).replaceAll("\\[|\\]", "")
+                .replaceAll("\\u002E\\u002C ",".\n\n").replaceAll("\\u00a0", ""));
+
+        Picasso.get()
+                .load(data.getImageUrl())
+                .placeholder(R.drawable.newspaper)
+                .into(photo);
+
+    }
 
 }

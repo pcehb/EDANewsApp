@@ -2,6 +2,9 @@ package uk.ac.kent.pceh3.miniproject.network;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
+import uk.ac.kent.pceh3.miniproject.model.Article;
 import uk.ac.kent.pceh3.miniproject.model.Feed;
 
 /**
@@ -13,5 +16,8 @@ public interface FeedsService {
 
     @GET("articles.cgi")
     Call<Feed> getAllFeeds();
+
+    @GET("article.cgi")
+    Call<Article> getArticle(@Query("url") String articleUrl);
 
 }

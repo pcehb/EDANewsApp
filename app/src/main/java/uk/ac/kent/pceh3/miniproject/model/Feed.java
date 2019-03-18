@@ -34,7 +34,6 @@ public class Feed {
         this.articles = articles;
     }
 
-
     public int getPage() {
         return page;
     }

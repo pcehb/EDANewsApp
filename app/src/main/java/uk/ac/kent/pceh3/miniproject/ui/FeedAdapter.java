@@ -11,8 +11,14 @@ import android.widget.TextView;
 import com.github.abdularis.piv.VerticalScrollParallaxImageView;
 import com.squareup.picasso.Picasso;
 
+import java.lang.reflect.Array;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import uk.ac.kent.pceh3.miniproject.model.Articles;
 import uk.ac.kent.pceh3.miniproject.R;
@@ -26,6 +32,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder>{
         private TextView title;
         private TextView desc;
         private TextView date;
+        private String dateFormatted;
         private VerticalScrollParallaxImageView photo;
 
 
@@ -44,7 +51,15 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder>{
 
             title.setText(articles.getTitle());
             desc.setText(articles.getDescription());
-            date.setText(articles.getDateTime());
+            dateFormatted = articles.getDateTime();
+            String[] dateFormattedPart = dateFormatted.split("T"); // yyyy/mm/dd
+            String[] dateSplit = dateFormattedPart[0].split("-");
+            String[] months = {"JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"};
+            int month = Integer.parseInt(dateSplit[1]);
+            month = month -1;
+            dateFormatted = dateSplit[2].toString() + " " + months[month] + " " + dateSplit[0].toString();
+            date.setText(dateFormatted);
+
             Picasso.get()
                     .load(articles.getImageUrl())
                     .placeholder(R.drawable.newspaper)
