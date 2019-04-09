@@ -18,11 +18,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import uk.ac.kent.pceh3.miniproject.model.Articles;
 import uk.ac.kent.pceh3.miniproject.model.Feed;
@@ -36,11 +38,21 @@ public class FeedFragment extends Fragment implements FragmentManager.OnBackStac
     private FeedViewModel viewModel;
     private ProgressBar progressBar;
     private String articleUrl;
+    private RecyclerView recyclerView;
+    private int page = 1;
+    public String query = "";
 
     private final Observer<List<Articles>> feedsListObserver = new Observer<List<Articles>>(){
         @Override
         public void onChanged(List<Articles> Articles){
             adapter.updateData(Articles);
+        }
+    };
+
+    private final Observer<List<Articles>> loadMoreObserver = new Observer<List<Articles>>(){
+        @Override
+        public void onChanged(List<Articles> Articles){
+            adapter.addData(Articles);
         }
     };
 
@@ -56,11 +68,10 @@ public class FeedFragment extends Fragment implements FragmentManager.OnBackStac
     private final Observer<Integer> selectedObserver = new Observer<Integer>(){
         @Override
         public void onChanged(Integer position){
-            List<Articles> articles = viewModel.getFeedList().getValue();
-            if (articles == null)
+            if (adapter.articles == null)
                 return;
 
-            Articles article = articles.get(position);
+            Articles article = adapter.articles.get(position);
             articleUrl = article.getArticleUrl();
 
             Intent intent = new Intent(getActivity(), DetailsActivity.class);
@@ -74,8 +85,9 @@ public class FeedFragment extends Fragment implements FragmentManager.OnBackStac
         @Override
         public void onClick(View v) {
             int position = (int) v.getTag();
-            List<Articles> list = viewModel.getFeedList().getValue();
-            Articles articles = list.get(position);
+
+            System.out.println(position);
+
             viewModel.setSelectedFeed(position);
         }
 
@@ -117,22 +129,32 @@ public class FeedFragment extends Fragment implements FragmentManager.OnBackStac
         feedListView.setAdapter(adapter);
 
         viewModel = ViewModelProviders.of((FragmentActivity) getActivity()).get(FeedViewModel.class);
+        loadFeed(query);
 
-        viewModel.getFeedList().observe((LifecycleOwner) getActivity(), feedsListObserver);
+
+        recyclerView = (RecyclerView) view.findViewById(R.id.feed_list_view);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (!recyclerView.canScrollVertically(1)) {
+                    page++;
+                    viewModel.getFeedList(page, query).observe((LifecycleOwner) getActivity(), loadMoreObserver);
+                }
+            }
+        });
+
+        return view;
+    }
+
+    public void loadFeed(String search){
+        query = search;
+        page = 1;
+        viewModel.getFeedList(page, query).observe((LifecycleOwner) getActivity(), feedsListObserver);
         viewModel.getNetworkStatus().observe((LifecycleOwner) getActivity(), networkStatusObserver);
 
         viewModel = ViewModelProviders.of(this).get(FeedViewModel.class);
         viewModel.getSelectedFeed().observe(this, selectedObserver);
-
-        List<Articles> data = viewModel.getFeedList().getValue();
-        if (data != null){
-            adapter.updateData(data);
-        }
-        else{
-
-        }
-
-        return view;
     }
 
     public void shouldDisplayHomeUp(){

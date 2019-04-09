@@ -6,8 +6,10 @@ import android.arch.lifecycle.MutableLiveData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,7 +36,7 @@ public class FeedsRepository {
 
 
     public enum NetworkStatus {
-        IDLE, LOADING, SUCCESS, ERROR
+        IDLE, LOADING
     }
     private MutableLiveData<NetworkStatus> networkStatus = new MutableLiveData<>();
 
@@ -57,18 +59,21 @@ public class FeedsRepository {
     }
 
     // Retrieve list of feed articles
-    public LiveData<List<Articles>> getFeedList() {
+    public LiveData<List<Articles>> getFeedList(final int page, String query) {
         final MutableLiveData<Feed> data = new MutableLiveData<>();
         final MutableLiveData<List<Articles>> articles = new MutableLiveData<>();
+
         // Get the HTTP call
-        Call<Feed> call = feedsService.getAllFeeds();
+        Call<Feed> call = feedsService.getAllFeeds(page, query);
         // Initiate network call in the background
         networkStatus.setValue(NetworkStatus.LOADING);
+
         call.enqueue(new Callback<Feed>() {
             @Override
             public void onResponse(Call<Feed> call, Response<Feed> response) {
                 articles.setValue(response.body().getArticles());
                 networkStatus.setValue(NetworkStatus.IDLE);
+
             }
             @Override
             public void onFailure(Call<Feed> call, Throwable t) {
@@ -77,7 +82,6 @@ public class FeedsRepository {
             // Handle failure
             }
         });
-
         return articles;
     }
 
@@ -96,7 +100,7 @@ public class FeedsRepository {
             }
             @Override
             public void onFailure(Call<Article> call, Throwable t) {
-                System.out.println(t.getMessage());
+                System.out.println("article error " + t.getMessage());
                 networkStatus.setValue(NetworkStatus.IDLE);
                 // Handle failure
             }

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.abdularis.piv.VerticalScrollParallaxImageView;
 import com.squareup.picasso.Picasso;
@@ -33,6 +34,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder>{
         private TextView desc;
         private TextView date;
         private String dateFormatted;
+
         private VerticalScrollParallaxImageView photo;
 
 
@@ -45,10 +47,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder>{
 
             itemView.setOnClickListener(itemCLickListener);
 
+
         }
 
         public void setData(Articles articles, int position) {
-
             title.setText(articles.getTitle());
             desc.setText(articles.getDescription());
             dateFormatted = articles.getDateTime();
@@ -73,7 +75,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder>{
         return articles.size();
     }
 
-    private List<Articles> articles = new ArrayList<>();
+    public List<Articles> articles = new ArrayList<>();
 
     private View.OnClickListener itemCLickListener;
 
@@ -98,10 +100,13 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder>{
         holder.setData(article, position);
     }
 
-    public void updateData(List<Articles> newFeeds){
-        this.articles = newFeeds;
+    public void updateData(List<Articles> newsFeed){
+        this.articles = newsFeed;
         this.notifyDataSetChanged();
     }
 
-
+    public void addData(List<Articles> newsFeed){
+        this.articles.addAll(newsFeed);
+        this.notifyDataSetChanged();
+    }
 }
