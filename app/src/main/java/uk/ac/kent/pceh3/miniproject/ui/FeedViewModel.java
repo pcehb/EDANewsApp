@@ -32,8 +32,8 @@ public class FeedViewModel extends ViewModel {
         selectedFeed.setValue(position);
     }
 
-    public LiveData<List<Articles>> getFeedList(int page, String query){
-        feedList = FeedsRepository.getInstance().getFeedList(page, query);
+    public LiveData<List<Articles>> getFeedList(int page, String query, String category){
+        feedList = FeedsRepository.getInstance().getFeedList(page, query, category);
         return feedList;
     }
 

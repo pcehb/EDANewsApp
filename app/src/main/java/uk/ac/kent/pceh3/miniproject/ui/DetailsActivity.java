@@ -35,6 +35,7 @@ public class DetailsActivity extends AppCompatActivity {
     private String date;
     private TextView desc;
     private ImageView photo;
+    private TextView categories;
     private ProgressBar progressBar;
     private FeedViewModel viewModel;
     private String articleUrl;
@@ -147,6 +148,7 @@ public class DetailsActivity extends AppCompatActivity {
         title=(TextView) findViewById(R.id.article_title);
         desc=(TextView) findViewById(R.id.article_desc);
         photo=(ImageView) findViewById(R.id.toolbarImage);
+        categories=(TextView) findViewById(R.id.categories);
 
         date = data.getDateTime();
         String[] dateFormattedPart = date.split("T"); // yyyy/mm/dd
@@ -163,6 +165,7 @@ public class DetailsActivity extends AppCompatActivity {
         title.setText(data.getTitle());
         desc.setText(Arrays.toString(data.getContent()).replaceAll("\\[|\\]", "")
                 .replaceAll("\\u002E\\u002C ",".\n\n").replaceAll("\\u00a0", ""));
+        categories.setText("Categories: " + Arrays.toString(data.getCategories()).replaceAll("\\[|\\]", ""));
 
         Picasso.get()
                 .load(data.getImageUrl())

@@ -16,11 +16,6 @@ public class Article {
     private String articleUrl;
     @Expose
     private String imageUrl;
-//    @Expose
-//    private ArrayList<Content> content;
-//    @Expose
-//    private ArrayList<Categories> categories;
-
     @Expose
     private String content[];
     @Expose

@@ -15,7 +15,7 @@ public interface FeedsService {
     static final String BASE_URL = "http://www.ubicomp-kent.org/projects/newsfeed/";
 
     @GET("articles.cgi")
-    Call<Feed> getAllFeeds(@Query("p") int page, @Query("q") String query);
+    Call<Feed> getAllFeeds(@Query("p") int page, @Query("q") String query, @Query("c") String category);
 
     @GET("article.cgi")
     Call<Article> getArticle(@Query("url") String articleUrl);

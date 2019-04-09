@@ -59,12 +59,12 @@ public class FeedsRepository {
     }
 
     // Retrieve list of feed articles
-    public LiveData<List<Articles>> getFeedList(final int page, String query) {
+    public LiveData<List<Articles>> getFeedList(final int page, String query, String category) {
         final MutableLiveData<Feed> data = new MutableLiveData<>();
         final MutableLiveData<List<Articles>> articles = new MutableLiveData<>();
 
         // Get the HTTP call
-        Call<Feed> call = feedsService.getAllFeeds(page, query);
+        Call<Feed> call = feedsService.getAllFeeds(page, query, category);
         // Initiate network call in the background
         networkStatus.setValue(NetworkStatus.LOADING);
 

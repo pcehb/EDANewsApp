@@ -41,6 +41,7 @@ public class FeedFragment extends Fragment implements FragmentManager.OnBackStac
     private RecyclerView recyclerView;
     private int page = 1;
     public String query = "";
+    private String category = "";
 
     private final Observer<List<Articles>> feedsListObserver = new Observer<List<Articles>>(){
         @Override
@@ -129,7 +130,7 @@ public class FeedFragment extends Fragment implements FragmentManager.OnBackStac
         feedListView.setAdapter(adapter);
 
         viewModel = ViewModelProviders.of((FragmentActivity) getActivity()).get(FeedViewModel.class);
-        loadFeed(query);
+        loadFeed(query, category);
 
 
         recyclerView = (RecyclerView) view.findViewById(R.id.feed_list_view);
@@ -139,7 +140,7 @@ public class FeedFragment extends Fragment implements FragmentManager.OnBackStac
                 super.onScrollStateChanged(recyclerView, newState);
                 if (!recyclerView.canScrollVertically(1)) {
                     page++;
-                    viewModel.getFeedList(page, query).observe((LifecycleOwner) getActivity(), loadMoreObserver);
+                    viewModel.getFeedList(page, query, category).observe((LifecycleOwner) getActivity(), loadMoreObserver);
                 }
             }
         });
@@ -147,10 +148,11 @@ public class FeedFragment extends Fragment implements FragmentManager.OnBackStac
         return view;
     }
 
-    public void loadFeed(String search){
+    public void loadFeed(String search, String searchedCategory){
         query = search;
         page = 1;
-        viewModel.getFeedList(page, query).observe((LifecycleOwner) getActivity(), feedsListObserver);
+        category = searchedCategory;
+        viewModel.getFeedList(page, query, category).observe((LifecycleOwner) getActivity(), feedsListObserver);
         viewModel.getNetworkStatus().observe((LifecycleOwner) getActivity(), networkStatusObserver);
 
         viewModel = ViewModelProviders.of(this).get(FeedViewModel.class);
