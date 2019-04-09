@@ -51,26 +51,44 @@ public class MainActivity extends AppCompatActivity {
         // Get the SearchView and set the searchable configuration
         final MenuItem myActionMenuItem = menu.findItem( R.id.app_bar_search);
         final SearchView searchView = (SearchView) myActionMenuItem.getActionView();
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String search) {
-                myActionMenuItem.collapseActionView();
-                searchView.setIconified(true);
+                viewPager.setCurrentItem(0, true);
 
                 int pos = viewPager.getCurrentItem();
                 Fragment activeFragment = adapter.getItem(pos);
+
                 if(pos == 0){
                     ((FeedFragment)activeFragment).loadFeed(search);
-
                 }
 
                 return false;
             }
+
             @Override
             public boolean onQueryTextChange(String s) {
                 return false;
             }
         });
+        searchView.setOnCloseListener (new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+
+                int pos = viewPager.getCurrentItem();
+                Fragment activeFragment = adapter.getItem(pos);
+
+                if(pos == 0){
+                    String search = "";
+                    ((FeedFragment)activeFragment).loadFeed(search);
+                }
+
+                return false;
+            }
+        });
+
         return true;
     }
 
