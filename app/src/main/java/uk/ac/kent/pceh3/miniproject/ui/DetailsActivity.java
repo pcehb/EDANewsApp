@@ -4,6 +4,7 @@ import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -21,6 +22,7 @@ import android.widget.Toolbar;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.FileOutputStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -84,7 +86,7 @@ public class DetailsActivity extends AppCompatActivity {
         else{
 
         }
-
+        // show all fabs
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,6 +98,7 @@ public class DetailsActivity extends AppCompatActivity {
                 }
             }
         });
+        // share article
         fab1 = (FloatingActionButton) findViewById(R.id.fab1);
         fab1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,7 +109,27 @@ public class DetailsActivity extends AppCompatActivity {
                 startActivity(Intent.createChooser(sharingIntent, "Sharing Option"));
             }
         });
+        // save article
         fab2 = (FloatingActionButton) findViewById(R.id.fab2);
+        fab2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               String filename = "hello_file";
+               String string = "hello world";
+
+                FileOutputStream fos = null;
+
+                try{
+                    fos = openFileOutput(filename, Context.MODE_APPEND);
+                    fos.write(string.getBytes());
+                    fos.close();
+                }
+                catch (java.io.IOException e){
+                    e.printStackTrace();
+                }
+            }
+        });
+        // open article in web
         fab3 = (FloatingActionButton) findViewById(R.id.fab3);
         fab3.setOnClickListener(new View.OnClickListener() {
             @Override

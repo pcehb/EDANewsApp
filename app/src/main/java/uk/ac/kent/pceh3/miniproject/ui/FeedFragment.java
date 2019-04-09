@@ -124,6 +124,8 @@ public class FeedFragment extends Fragment implements FragmentManager.OnBackStac
         View view = inflater.inflate(R.layout.fragment_feed_list, container, false);
 
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
+
+        //hide loading wheel to allow custom wheel
         try {
             Field f = swipeContainer.getClass().getDeclaredField("mCircleView");
             f.setAccessible(true);
