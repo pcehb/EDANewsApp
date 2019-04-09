@@ -2,6 +2,8 @@ package uk.ac.kent.pceh3.miniproject.ui;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
@@ -24,7 +26,11 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -55,12 +61,13 @@ public class MainActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+
+        isNetworkConnected();
     }
 
 
@@ -162,6 +169,20 @@ public class MainActivity extends AppCompatActivity {
         });
 
         return true;
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if (cm.getActiveNetworkInfo() != null){
+            System.out.println("CONNECTED");
+        }
+        else {
+            System.out.println("NOT CONNECTED");
+            viewPager.setCurrentItem(1, true); //change page to saved articles
+        }
+
+        return cm.getActiveNetworkInfo() != null;
     }
 
 
