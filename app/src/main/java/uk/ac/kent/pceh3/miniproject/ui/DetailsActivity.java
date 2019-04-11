@@ -4,8 +4,11 @@ import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -18,17 +21,23 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import uk.ac.kent.pceh3.miniproject.R;
 import uk.ac.kent.pceh3.miniproject.model.Article;
 import uk.ac.kent.pceh3.miniproject.network.FeedsRepository;
+import uk.ac.kent.pceh3.miniproject.network.SavedArticlesDB;
 
 
 public class DetailsActivity extends AppCompatActivity {
@@ -114,19 +123,26 @@ public class DetailsActivity extends AppCompatActivity {
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               String filename = "hello_file";
-               String string = "hello world";
+//               String filename = articleUrl;
+//                String[] articleData = {title.getText().toString(), date, desc.getText().toString(), categories.getText().toString(), articleUrl};
+//
+//                FileOutputStream fos = null;
+//
+//                try{
+//                    fos = openFileOutput(filename, Context.MODE_PRIVATE);
+//                    ObjectOutputStream dout = new ObjectOutputStream(fos);
+//                    dout.writeObject(articleData);
+//
+//                    dout.flush();
+//                    fos.getFD().sync();
+//                    fos.close();
+//                }
+//                catch (java.io.IOException e){
+//                    e.printStackTrace();
+//                }
 
-                FileOutputStream fos = null;
+                saveToDB();
 
-                try{
-                    fos = openFileOutput(filename, Context.MODE_APPEND);
-                    fos.write(string.getBytes());
-                    fos.close();
-                }
-                catch (java.io.IOException e){
-                    e.printStackTrace();
-                }
             }
         });
         // open article in web
@@ -140,6 +156,31 @@ public class DetailsActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void saveToDB() {
+
+        SQLiteDatabase database = new SavedArticlesDB(this).getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(SavedArticlesDB.SAVED_COLUMN_URL, articleUrl);
+        values.put(SavedArticlesDB.SAVED_COLUMN_TITLE, title.getText().toString());
+        values.put(SavedArticlesDB.SAVED_COLUMN_DESC, desc.getText().toString());
+//        Bitmap bmap = photo.getDrawingCache();
+//        values.put(SavedArticlesDB.SAVED_COLUMN_PHOTO, getBytes(bmap));
+        values.put(SavedArticlesDB.SAVED_COLUMN_DATE, date);
+        values.put(SavedArticlesDB.SAVED_COLUMN_CAT, categories.getText().toString());
+
+        long newRowId = database.insert(SavedArticlesDB.SAVED_TABLE_NAME, null, values);
+
+        Toast.makeText(this, "Article saved", Toast.LENGTH_LONG).show();
+    }
+
+    // convert from bitmap to byte array
+    public static byte[] getBytes(Bitmap bitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
+        return stream.toByteArray();
     }
 
     private void showFABMenu(){
