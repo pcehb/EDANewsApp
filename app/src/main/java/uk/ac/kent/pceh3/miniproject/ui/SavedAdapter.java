@@ -1,5 +1,7 @@
 package uk.ac.kent.pceh3.miniproject.ui;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
@@ -18,6 +20,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import uk.ac.kent.pceh3.miniproject.R;
+import uk.ac.kent.pceh3.miniproject.model.Article;
 import uk.ac.kent.pceh3.miniproject.model.Articles;
 import uk.ac.kent.pceh3.miniproject.network.SavedArticlesDB;
 
@@ -27,13 +30,51 @@ import uk.ac.kent.pceh3.miniproject.network.SavedArticlesDB;
 
 public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.ViewHolder>{
     private MyCursorAdapter mCursorAdapter;
-
     Context mContext;
+    public View.OnClickListener itemCLickListener;
+    public List<Articles> savedArticleList = new ArrayList<>();
+    public MutableLiveData<List<Articles>> savedArticles;
 
-    public SavedAdapter(Context context, Cursor cursor) {
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        private TextView title;
+        private TextView desc;
+        private TextView date;
+        private TextView url;
 
+
+        private VerticalScrollParallaxImageView photo;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            title = (TextView) itemView.findViewById(R.id.article_title);
+            desc = (TextView) itemView.findViewById(R.id.article_desc);
+            date = (TextView) itemView.findViewById(R.id.date);
+            photo = (VerticalScrollParallaxImageView) itemView.findViewById(R.id.photo);
+            url = (TextView) itemView.findViewById(R.id.url);
+            itemView.setOnClickListener(itemCLickListener);
+        }
+
+        public void bindCursor(Cursor cursor) {
+            title.setText(cursor.getString(cursor.getColumnIndexOrThrow(SavedArticlesDB.SAVED_COLUMN_TITLE)));
+            String description = cursor.getString(cursor.getColumnIndexOrThrow(SavedArticlesDB.SAVED_COLUMN_DESC));
+            description = StringUtils.abbreviate(description, 200);
+            desc.setText(description);
+            date.setText(cursor.getString(cursor.getColumnIndexOrThrow(SavedArticlesDB.SAVED_COLUMN_DATE)));
+            url.setText(cursor.getString(cursor.getColumnIndexOrThrow(SavedArticlesDB.SAVED_COLUMN_URL)));
+
+            // Picasso.get()
+//                    .load(articles.getImageUrl())
+//                    .placeholder(R.drawable.newspaper)
+//                    .into(photo);
+            itemView.setTag(cursor.getPosition());
+        }
+
+    }
+
+    public SavedAdapter(Context context, Cursor cursor, View.OnClickListener clickListener) {
         mContext = context;
         mCursorAdapter = new MyCursorAdapter(mContext, cursor, 0);
+        this.itemCLickListener = clickListener;
     }
 
     public static class MyCursorAdapter extends CursorAdapter {
@@ -55,45 +96,6 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.ViewHolder>{
         public void bindViewHolder(ViewHolder viewHolder, Context context, Cursor cursor) {
             viewHolder.bindCursor(cursor);
         }
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView title;
-        private TextView desc;
-        private TextView date;
-
-        private VerticalScrollParallaxImageView photo;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            title = (TextView) itemView.findViewById(R.id.article_title);
-            desc = (TextView) itemView.findViewById(R.id.article_desc);
-            date = (TextView) itemView.findViewById(R.id.date);
-            photo = (VerticalScrollParallaxImageView) itemView.findViewById(R.id.photo);
-        }
-
-        public void bindCursor(Cursor cursor) {
-            System.out.println("article");
-            title.setText(cursor.getString(cursor.getColumnIndexOrThrow(SavedArticlesDB.SAVED_COLUMN_TITLE)));
-            String description = cursor.getString(cursor.getColumnIndexOrThrow(SavedArticlesDB.SAVED_COLUMN_DESC));
-            description = StringUtils.abbreviate(description, 200);
-            desc.setText(description);
-            date.setText(cursor.getString(cursor.getColumnIndexOrThrow(SavedArticlesDB.SAVED_COLUMN_DATE)));
-
-        }
-
-
-//        public void setData(Articles articles, int position) {
-//            title.setText(articles.getTitle());
-//            desc.setText(articles.getDescription());
-//            date.setText(articles.getDateTime());
-
-//            Picasso.get()
-//                    .load(articles.getImageUrl())
-//                    .placeholder(R.drawable.newspaper)
-//                    .into(photo);
-//            itemView.setTag(position);
-//        }
     }
 
     @Override

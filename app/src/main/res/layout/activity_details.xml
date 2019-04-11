@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -10,8 +10,8 @@
         android:id="@+id/appBar"
         android:layout_width="match_parent"
         android:layout_height="250dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbar"
@@ -48,8 +48,8 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -103,6 +103,7 @@
 
 
     </android.support.v4.widget.NestedScrollView>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab3"
         android:layout_width="45dp"
@@ -130,12 +131,12 @@
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_margin="24dp"
+        android:actionProviderClass="android.widget.ShareActionProvider"
         android:tint="@color/textColorPrimary"
         app:fabSize="mini"
         app:layout_anchor="@id/appBar"
         app:layout_anchorGravity="bottom|end"
-        app:srcCompat="@drawable/share"
-        android:actionProviderClass="android.widget.ShareActionProvider"/>
+        app:srcCompat="@drawable/share" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
@@ -147,7 +148,6 @@
         app:layout_anchorGravity="bottom|end"
         app:rippleColor="@color/textColorPrimary"
         app:srcCompat="@drawable/plus" />
-
 
 
 </android.support.design.widget.CoordinatorLayout>

@@ -7,8 +7,10 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -38,6 +40,9 @@ import uk.ac.kent.pceh3.miniproject.R;
 import uk.ac.kent.pceh3.miniproject.model.Article;
 import uk.ac.kent.pceh3.miniproject.network.FeedsRepository;
 import uk.ac.kent.pceh3.miniproject.network.SavedArticlesDB;
+
+import static uk.ac.kent.pceh3.miniproject.network.SavedArticlesDB.SAVED_COLUMN_URL;
+import static uk.ac.kent.pceh3.miniproject.network.SavedArticlesDB.SAVED_TABLE_NAME;
 
 
 public class DetailsActivity extends AppCompatActivity {
@@ -82,19 +87,8 @@ public class DetailsActivity extends AppCompatActivity {
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
 
-        viewModel = ViewModelProviders.of(this).get(FeedViewModel.class);
+        isNetworkConnected();
 
-        viewModel.getArticle(articleUrl).observe(this, articleObserver);
-        viewModel.getNetworkStatus().observe(this, networkStatusObserver);
-
-
-        Article data = viewModel.getArticle(articleUrl).getValue();
-        if (data != null){
-            updateData(data);
-        }
-        else{
-
-        }
         // show all fabs
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -123,25 +117,20 @@ public class DetailsActivity extends AppCompatActivity {
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//               String filename = articleUrl;
-//                String[] articleData = {title.getText().toString(), date, desc.getText().toString(), categories.getText().toString(), articleUrl};
-//
-//                FileOutputStream fos = null;
-//
-//                try{
-//                    fos = openFileOutput(filename, Context.MODE_PRIVATE);
-//                    ObjectOutputStream dout = new ObjectOutputStream(fos);
-//                    dout.writeObject(articleData);
-//
-//                    dout.flush();
-//                    fos.getFD().sync();
-//                    fos.close();
-//                }
-//                catch (java.io.IOException e){
-//                    e.printStackTrace();
-//                }
+                SQLiteDatabase database = new SavedArticlesDB(getApplicationContext()).getWritableDatabase();
+                ContentValues values = new ContentValues();
 
-                saveToDB();
+                values.put(SavedArticlesDB.SAVED_COLUMN_URL, articleUrl);
+                values.put(SavedArticlesDB.SAVED_COLUMN_TITLE, title.getText().toString());
+                values.put(SavedArticlesDB.SAVED_COLUMN_DESC, desc.getText().toString());
+//        Bitmap bmap = photo.getDrawingCache();
+//        values.put(SavedArticlesDB.SAVED_COLUMN_PHOTO, getBytes(bmap));
+                values.put(SavedArticlesDB.SAVED_COLUMN_DATE, date);
+                values.put(SavedArticlesDB.SAVED_COLUMN_CAT, categories.getText().toString());
+
+                long newRowId = database.insert(SavedArticlesDB.SAVED_TABLE_NAME, null, values);
+
+                Toast.makeText(getApplicationContext(), "Article saved", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -156,24 +145,6 @@ public class DetailsActivity extends AppCompatActivity {
             }
         });
 
-    }
-
-    private void saveToDB() {
-
-        SQLiteDatabase database = new SavedArticlesDB(this).getWritableDatabase();
-        ContentValues values = new ContentValues();
-
-        values.put(SavedArticlesDB.SAVED_COLUMN_URL, articleUrl);
-        values.put(SavedArticlesDB.SAVED_COLUMN_TITLE, title.getText().toString());
-        values.put(SavedArticlesDB.SAVED_COLUMN_DESC, desc.getText().toString());
-//        Bitmap bmap = photo.getDrawingCache();
-//        values.put(SavedArticlesDB.SAVED_COLUMN_PHOTO, getBytes(bmap));
-        values.put(SavedArticlesDB.SAVED_COLUMN_DATE, date);
-        values.put(SavedArticlesDB.SAVED_COLUMN_CAT, categories.getText().toString());
-
-        long newRowId = database.insert(SavedArticlesDB.SAVED_TABLE_NAME, null, values);
-
-        Toast.makeText(this, "Article saved", Toast.LENGTH_LONG).show();
     }
 
     // convert from bitmap to byte array
@@ -236,6 +207,55 @@ public class DetailsActivity extends AppCompatActivity {
                 .placeholder(R.drawable.newspaper)
                 .into(photo);
 
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if (cm.getActiveNetworkInfo() != null){
+            System.out.println("CONNECTED");
+            viewModel = ViewModelProviders.of(this).get(FeedViewModel.class);
+
+            viewModel.getArticle(articleUrl).observe(this, articleObserver);
+            viewModel.getNetworkStatus().observe(this, networkStatusObserver);
+
+            Article data = viewModel.getArticle(articleUrl).getValue();
+            if (data != null){
+                updateData(data);
+            }
+            else{
+
+            }
+        }
+        else {
+            System.out.println("NOT CONNECTED");
+            title=(TextView) findViewById(R.id.article_title);
+            desc=(TextView) findViewById(R.id.article_desc);
+            photo=(ImageView) findViewById(R.id.toolbarImage);
+            categories=(TextView) findViewById(R.id.categories);
+            CollapsingToolbarLayout toolbar = findViewById(R.id.collapsingToolbar);
+
+            SQLiteDatabase database = new SavedArticlesDB(getApplicationContext()).getReadableDatabase();
+
+            Cursor cursor = database.rawQuery("SELECT * FROM " + SavedArticlesDB.SAVED_TABLE_NAME + " WHERE "
+                    + SavedArticlesDB.SAVED_COLUMN_URL + " = ?", new String[]{articleUrl});
+
+            if (cursor != null)
+            {
+                cursor.moveToFirst();
+                String titleText = cursor.getString(2);
+                title.setText(titleText);
+                String descText = cursor.getString(3);
+                desc.setText(descText);
+                String dateText = cursor.getString(5);
+                toolbar.setTitle(dateText);
+                String catText = cursor.getString(6);
+                categories.setText(catText);
+            }
+
+        }
+
+        return cm.getActiveNetworkInfo() != null;
     }
 
 }

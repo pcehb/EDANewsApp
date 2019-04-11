@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class SavedFragment extends Fragment {
     private RecyclerView feedListView;
     private LinearLayoutManager layoutManager;
     private SavedAdapter adapter;
+    private String articleUrl;
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
 
@@ -59,8 +61,6 @@ public class SavedFragment extends Fragment {
 
         DividerItemDecoration divider = new DividerItemDecoration(getActivity(), layoutManager.getOrientation());
         feedListView.addItemDecoration(divider);
-        feedListView.setAdapter(adapter);
-
 
         recyclerView = (RecyclerView) view.findViewById(R.id.feed_list_view);
 
@@ -75,7 +75,8 @@ public class SavedFragment extends Fragment {
 
         Cursor cursor = database.rawQuery("select * from " + SAVED_TABLE_NAME,null);
 
-        feedListView.setAdapter(new SavedAdapter(getContext(), cursor));
+        feedListView.setAdapter(new SavedAdapter(getContext(), cursor, listItemClickListener));
+        adapter = new SavedAdapter(getContext(), cursor, listItemClickListener);
     }
 
 
@@ -84,18 +85,18 @@ public class SavedFragment extends Fragment {
         public void onClick(View v) {
             int position = (int) v.getTag();
 
-            System.out.println(position);
+            TextView url = v.findViewById(R.id.url);
+            articleUrl = url.getText().toString();
 
-//            Articles article = adapter.cursor.get(position);
-//            articleUrl = article.getArticleUrl();
-//
-//            Intent intent = new Intent(getActivity(), DetailsActivity.class);
-//            intent.putExtra("articleUrl", articleUrl);
-//
-//            startActivity(intent);
+            Intent intent = new Intent(getActivity(), DetailsActivity.class);
+            intent.putExtra("articleUrl", articleUrl);
+
+            startActivity(intent);
+
         }
 
-
     };
+
+
 
 }
