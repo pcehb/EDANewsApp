@@ -45,6 +45,7 @@ public class SavedFragment extends Fragment {
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
     AlertDialog.Builder builder;
+    private ImageView noImages;
 
     public SavedFragment() {
         // Required empty public constructor
@@ -63,6 +64,7 @@ public class SavedFragment extends Fragment {
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
         feedListView = (RecyclerView) view.findViewById(R.id.feed_list_view);
+        noImages = view.findViewById(R.id.noImages);
         layoutManager = new LinearLayoutManager(getActivity());
         gridLayoutManager = new GridLayoutManager(getActivity(), 2);
         feedListView.setLayoutManager(layoutManager);
@@ -79,8 +81,10 @@ public class SavedFragment extends Fragment {
         }
 
         recyclerView = (RecyclerView) view.findViewById(R.id.feed_list_view);
-        feedListView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
-        feedListView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.HORIZONTAL));
+        DividerItemDecoration dividerVert = new DividerItemDecoration(getContext(),
+                LinearLayoutManager.VERTICAL);
+        dividerVert.setDrawable(getContext().getResources().getDrawable(R.drawable.divider));
+        feedListView.addItemDecoration(dividerVert);
 
         readFromDB();
 
@@ -102,8 +106,13 @@ public class SavedFragment extends Fragment {
 
         Cursor cursor = database.rawQuery("select * from " + SAVED_TABLE_NAME,null);
 
+        if(cursor.getCount() <= 0){ //no articles saved yet
+            noImages.setVisibility(View.VISIBLE);
+        }
+        else{
+            noImages.setVisibility(View.GONE);
+        }
         feedListView.setAdapter(new SavedAdapter(getContext(), cursor, listItemClickListener, listLongItemClickListener));
-        adapter = new SavedAdapter(getContext(), cursor, listItemClickListener, listLongItemClickListener);
     }
 
 

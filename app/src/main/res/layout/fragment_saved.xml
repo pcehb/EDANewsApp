@@ -31,20 +31,19 @@
         app:layout_constraintTop_toTopOf="@+id/swipeContainer" />
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/noImages"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:contentDescription="No images saved"
-        android:src="@mipmap/ic_launcher"
+        android:src="@drawable/nosaved"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/feed_list_view"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/feed_list_view"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="@+id/feed_list_view" />
 
 </android.support.constraint.ConstraintLayout>

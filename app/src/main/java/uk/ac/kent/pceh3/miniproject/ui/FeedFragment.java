@@ -3,8 +3,10 @@ package uk.ac.kent.pceh3.miniproject.ui;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -29,7 +31,7 @@ import uk.ac.kent.pceh3.miniproject.model.Articles;
 import uk.ac.kent.pceh3.miniproject.R;
 import uk.ac.kent.pceh3.miniproject.network.FeedsRepository;
 
-public class FeedFragment extends Fragment implements FragmentManager.OnBackStackChangedListener {
+public class FeedFragment extends Fragment {
     private RecyclerView feedListView;
     private LinearLayoutManager layoutManager;
     private GridLayoutManager gridLayoutManager;
@@ -42,7 +44,7 @@ public class FeedFragment extends Fragment implements FragmentManager.OnBackStac
     public String query = "";
     private String category = "";
     private SwipeRefreshLayout swipeContainer;
-
+    private ImageView noImages;
 
     private final Observer<List<Articles>> feedsListObserver = new Observer<List<Articles>>(){
         @Override
@@ -102,23 +104,13 @@ public class FeedFragment extends Fragment implements FragmentManager.OnBackStac
     }
 
 
-    public void onBackStackChanged() {
-        shouldDisplayHomeUp();
-    }
-
-    public boolean onSupportNavigateUp() {
-        getFragmentManager().popBackStack();
-        return true;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        getFragmentManager().addOnBackStackChangedListener(this);
-        shouldDisplayHomeUp();
 
         View view = inflater.inflate(R.layout.fragment_feed_list, container, false);
+
+        noImages = view.findViewById(R.id.noImages);
 
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
 
@@ -141,8 +133,10 @@ public class FeedFragment extends Fragment implements FragmentManager.OnBackStac
         adapter = new FeedAdapter(listItemClickListener);
 
         feedListView = (RecyclerView) view.findViewById(R.id.feed_list_view);
-        feedListView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
-        feedListView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.HORIZONTAL));
+        DividerItemDecoration dividerVert = new DividerItemDecoration(getContext(),
+                LinearLayoutManager.VERTICAL);
+        dividerVert.setDrawable(getContext().getResources().getDrawable(R.drawable.divider));
+        feedListView.addItemDecoration(dividerVert);
         feedListView.setAdapter(adapter);
 
         int orientation = getResources().getConfiguration().orientation;
@@ -155,8 +149,6 @@ public class FeedFragment extends Fragment implements FragmentManager.OnBackStac
             // In portrait
             feedListView.setLayoutManager(layoutManager);
         }
-
-
 
         viewModel = ViewModelProviders.of((FragmentActivity) getActivity()).get(FeedViewModel.class);
         loadFeed(query, category);
@@ -186,6 +178,15 @@ public class FeedFragment extends Fragment implements FragmentManager.OnBackStac
         return view;
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if (getActivity() != null) {
+            isNetworkConnected();
+        }
+    }
+
     public void loadFeed(String search, String searchedCategory){
         query = search;
         page = 1;
@@ -197,10 +198,18 @@ public class FeedFragment extends Fragment implements FragmentManager.OnBackStac
         viewModel.getSelectedFeed().observe(this, selectedObserver);
     }
 
-    public void shouldDisplayHomeUp(){
-        //Enable Up button only if there are entries in the back stack
-        boolean canGoBack = getFragmentManager().getBackStackEntryCount()>0;
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(canGoBack);
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        if (cm.getActiveNetworkInfo() != null){
+            noImages.setVisibility(View.GONE);
+        }
+        else {
+            noImages.setVisibility(View.VISIBLE);
+        }
+
+        return cm.getActiveNetworkInfo() != null;
     }
 
 }

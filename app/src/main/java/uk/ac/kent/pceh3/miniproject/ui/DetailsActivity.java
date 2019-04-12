@@ -202,7 +202,9 @@ public class DetailsActivity extends AppCompatActivity {
         int month = Integer.parseInt(dateSplit[1]);
         month = month -1;
         date = dateSplit[2].toString() + " " + months[month] + " " + dateSplit[0].toString();
+
         toolbar.setTitle(date);
+
         title.setText(data.getTitle());
         desc.setText(Arrays.toString(data.getContent()).replaceAll("\\[|\\]", "")
                 .replaceAll("\\u002E\\u002C ",".\n\n").replaceAll("\\u00a0", ""));

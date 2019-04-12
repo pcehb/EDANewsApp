@@ -36,7 +36,6 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.ViewHolder> 
     Context mContext;
     public View.OnClickListener itemCLickListener;
     public View.OnLongClickListener itemLongCLickListener;
-    public List<Articles> savedArticleList = new ArrayList<>();
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView title;
