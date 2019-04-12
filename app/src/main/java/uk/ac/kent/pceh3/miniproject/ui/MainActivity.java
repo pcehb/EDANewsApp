@@ -44,9 +44,6 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private RadioGroup radioGroup;
-    private RadioButton news, research,internationalimpact,researchcommunications,researchices, researchii, researchcommunicationsantennas,
-            researchcommunicationsmobcomms, researchcommunicationsphotonics, researchcommunicationssmartrfandmicrowavesystems, researchicescontrol,
-            researchicesembedded, researchicesinstrumentation, researchiibiometrics, researchiidigmedia, researchiirobotics;
     public ViewPagerAdapter adapter;
     Button closePopupBtn;
     PopupWindow popupWindow;

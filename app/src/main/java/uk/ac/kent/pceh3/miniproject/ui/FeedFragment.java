@@ -4,6 +4,7 @@ import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -11,31 +12,27 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.squareup.picasso.Picasso;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import uk.ac.kent.pceh3.miniproject.model.Articles;
-import uk.ac.kent.pceh3.miniproject.model.Feed;
 import uk.ac.kent.pceh3.miniproject.R;
 import uk.ac.kent.pceh3.miniproject.network.FeedsRepository;
 
 public class FeedFragment extends Fragment implements FragmentManager.OnBackStackChangedListener {
     private RecyclerView feedListView;
     private LinearLayoutManager layoutManager;
+    private GridLayoutManager gridLayoutManager;
     private FeedAdapter adapter;
     private FeedViewModel viewModel;
     private ProgressBar progressBar;
@@ -137,14 +134,29 @@ public class FeedFragment extends Fragment implements FragmentManager.OnBackStac
 
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
-        feedListView = (RecyclerView) view.findViewById(R.id.feed_list_view);
+
         layoutManager = new LinearLayoutManager(getActivity());
-        feedListView.setLayoutManager(layoutManager);
+        gridLayoutManager = new GridLayoutManager(getActivity(), 2);
 
         adapter = new FeedAdapter(listItemClickListener);
-        DividerItemDecoration divider = new DividerItemDecoration(getActivity(), layoutManager.getOrientation());
-        feedListView.addItemDecoration(divider);
+
+        feedListView = (RecyclerView) view.findViewById(R.id.feed_list_view);
+        feedListView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+        feedListView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.HORIZONTAL));
         feedListView.setAdapter(adapter);
+
+        int orientation = getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // In landscape
+
+            feedListView.setLayoutManager(gridLayoutManager);
+
+        } else {
+            // In portrait
+            feedListView.setLayoutManager(layoutManager);
+        }
+
+
 
         viewModel = ViewModelProviders.of((FragmentActivity) getActivity()).get(FeedViewModel.class);
         loadFeed(query, category);

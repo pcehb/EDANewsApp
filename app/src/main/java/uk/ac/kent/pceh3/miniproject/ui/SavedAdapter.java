@@ -4,9 +4,12 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,12 +31,12 @@ import uk.ac.kent.pceh3.miniproject.network.SavedArticlesDB;
  * Created by pceh3 on 11/04/2019.
  */
 
-public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.ViewHolder>{
+public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.ViewHolder> {
     private MyCursorAdapter mCursorAdapter;
     Context mContext;
     public View.OnClickListener itemCLickListener;
+    public View.OnLongClickListener itemLongCLickListener;
     public List<Articles> savedArticleList = new ArrayList<>();
-    public MutableLiveData<List<Articles>> savedArticles;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private TextView title;
@@ -52,6 +55,7 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.ViewHolder>{
             photo = (VerticalScrollParallaxImageView) itemView.findViewById(R.id.photo);
             url = (TextView) itemView.findViewById(R.id.url);
             itemView.setOnClickListener(itemCLickListener);
+            itemView.setOnLongClickListener(itemLongCLickListener);
         }
 
         public void bindCursor(Cursor cursor) {
@@ -62,19 +66,21 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.ViewHolder>{
             date.setText(cursor.getString(cursor.getColumnIndexOrThrow(SavedArticlesDB.SAVED_COLUMN_DATE)));
             url.setText(cursor.getString(cursor.getColumnIndexOrThrow(SavedArticlesDB.SAVED_COLUMN_URL)));
 
-            // Picasso.get()
-//                    .load(articles.getImageUrl())
-//                    .placeholder(R.drawable.newspaper)
-//                    .into(photo);
+            byte[] imgByte = cursor.getBlob
+                    (cursor.getColumnIndexOrThrow(SavedArticlesDB.SAVED_COLUMN_PHOTO));
+            Bitmap bmp = BitmapFactory.decodeByteArray(imgByte,0,imgByte.length);
+            photo.setImageBitmap(bmp);
+
             itemView.setTag(cursor.getPosition());
         }
 
     }
 
-    public SavedAdapter(Context context, Cursor cursor, View.OnClickListener clickListener) {
+    public SavedAdapter(Context context, Cursor cursor, View.OnClickListener clickListener, View.OnLongClickListener longClickListener) {
         mContext = context;
         mCursorAdapter = new MyCursorAdapter(mContext, cursor, 0);
         this.itemCLickListener = clickListener;
+        this.itemLongCLickListener = longClickListener;
     }
 
     public static class MyCursorAdapter extends CursorAdapter {

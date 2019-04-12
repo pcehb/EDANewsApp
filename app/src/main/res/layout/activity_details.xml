@@ -22,7 +22,7 @@
             app:expandedTitleMarginEnd="64dp"
             app:expandedTitleMarginStart="48dp"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:title="@string/app_name">
+           >
 
             <ImageView
                 android:id="@+id/toolbarImage"
@@ -39,7 +39,8 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin" />
+                app:layout_collapseMode="pin"
+                app:title="@string/app_name"/>
 
 
         </android.support.design.widget.CollapsingToolbarLayout>

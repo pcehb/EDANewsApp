@@ -7,12 +7,14 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.Uri;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewCompat;
@@ -60,6 +62,7 @@ public class DetailsActivity extends AppCompatActivity {
     private FloatingActionButton fab2;
     private FloatingActionButton fab3;
     private FloatingActionButton fab;
+    private android.support.v7.widget.Toolbar toolbar;
 
     private final Observer<Article> articleObserver = new Observer<Article>(){
         @Override
@@ -117,20 +120,33 @@ public class DetailsActivity extends AppCompatActivity {
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SQLiteDatabase database = new SavedArticlesDB(getApplicationContext()).getWritableDatabase();
-                ContentValues values = new ContentValues();
+                SQLiteDatabase sqldb = new SavedArticlesDB(getApplicationContext()).getReadableDatabase();
 
-                values.put(SavedArticlesDB.SAVED_COLUMN_URL, articleUrl);
-                values.put(SavedArticlesDB.SAVED_COLUMN_TITLE, title.getText().toString());
-                values.put(SavedArticlesDB.SAVED_COLUMN_DESC, desc.getText().toString());
-//        Bitmap bmap = photo.getDrawingCache();
-//        values.put(SavedArticlesDB.SAVED_COLUMN_PHOTO, getBytes(bmap));
-                values.put(SavedArticlesDB.SAVED_COLUMN_DATE, date);
-                values.put(SavedArticlesDB.SAVED_COLUMN_CAT, categories.getText().toString());
+                Cursor cursor = sqldb.rawQuery("select * from " + SAVED_TABLE_NAME + " WHERE " + SAVED_COLUMN_URL + " =?", new String[] {articleUrl});
+                if(cursor.getCount() <= 0){ //article isn't saved yet
+                    cursor.close();
+                    SQLiteDatabase database = new SavedArticlesDB(getApplicationContext()).getWritableDatabase();
+                    ContentValues values = new ContentValues();
+                    values.put(SavedArticlesDB.SAVED_COLUMN_URL, articleUrl);
+                    values.put(SavedArticlesDB.SAVED_COLUMN_TITLE, title.getText().toString());
+                    values.put(SavedArticlesDB.SAVED_COLUMN_DESC, desc.getText().toString());
+                    Bitmap image = ((BitmapDrawable)photo.getDrawable()).getBitmap();
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                    byte imageInByte[] = stream.toByteArray();
+                    values.put(SavedArticlesDB.SAVED_COLUMN_PHOTO, imageInByte);
+                    values.put(SavedArticlesDB.SAVED_COLUMN_DATE, date);
+                    values.put(SavedArticlesDB.SAVED_COLUMN_CAT, categories.getText().toString());
 
-                long newRowId = database.insert(SavedArticlesDB.SAVED_TABLE_NAME, null, values);
+                    database.insert(SavedArticlesDB.SAVED_TABLE_NAME, null, values);
 
-                Toast.makeText(getApplicationContext(), "Article saved", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Article saved", Toast.LENGTH_LONG).show();
+
+                }
+                else{
+                    Toast.makeText(getApplicationContext(), "Article already saved", Toast.LENGTH_LONG).show();
+                    cursor.close();
+                }
 
             }
         });
@@ -145,13 +161,6 @@ public class DetailsActivity extends AppCompatActivity {
             }
         });
 
-    }
-
-    // convert from bitmap to byte array
-    public static byte[] getBytes(Bitmap bitmap) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
-        return stream.toByteArray();
     }
 
     private void showFABMenu(){
@@ -184,6 +193,7 @@ public class DetailsActivity extends AppCompatActivity {
         desc=(TextView) findViewById(R.id.article_desc);
         photo=(ImageView) findViewById(R.id.toolbarImage);
         categories=(TextView) findViewById(R.id.categories);
+        toolbar = findViewById(R.id.toolbar);
 
         date = data.getDateTime();
         String[] dateFormattedPart = date.split("T"); // yyyy/mm/dd
@@ -192,11 +202,7 @@ public class DetailsActivity extends AppCompatActivity {
         int month = Integer.parseInt(dateSplit[1]);
         month = month -1;
         date = dateSplit[2].toString() + " " + months[month] + " " + dateSplit[0].toString();
-
-        CollapsingToolbarLayout toolbar = findViewById(R.id.collapsingToolbar);
-
         toolbar.setTitle(date);
-
         title.setText(data.getTitle());
         desc.setText(Arrays.toString(data.getContent()).replaceAll("\\[|\\]", "")
                 .replaceAll("\\u002E\\u002C ",".\n\n").replaceAll("\\u00a0", ""));
@@ -233,12 +239,14 @@ public class DetailsActivity extends AppCompatActivity {
             desc=(TextView) findViewById(R.id.article_desc);
             photo=(ImageView) findViewById(R.id.toolbarImage);
             categories=(TextView) findViewById(R.id.categories);
-            CollapsingToolbarLayout toolbar = findViewById(R.id.collapsingToolbar);
-
+            toolbar = findViewById(R.id.toolbar);
             SQLiteDatabase database = new SavedArticlesDB(getApplicationContext()).getReadableDatabase();
 
-            Cursor cursor = database.rawQuery("SELECT * FROM " + SavedArticlesDB.SAVED_TABLE_NAME + " WHERE "
-                    + SavedArticlesDB.SAVED_COLUMN_URL + " = ?", new String[]{articleUrl});
+            Cursor cursor = database.query(SavedArticlesDB.SAVED_TABLE_NAME,null,
+                    SavedArticlesDB.SAVED_COLUMN_URL + " like ?",
+                    new String[]{articleUrl},null,null,null
+            );
+
 
             if (cursor != null)
             {
@@ -247,6 +255,9 @@ public class DetailsActivity extends AppCompatActivity {
                 title.setText(titleText);
                 String descText = cursor.getString(3);
                 desc.setText(descText);
+                byte[] imgByte = cursor.getBlob(4);
+                Bitmap bmp = BitmapFactory.decodeByteArray(imgByte,0,imgByte.length);
+                photo.setImageBitmap(bmp);
                 String dateText = cursor.getString(5);
                 toolbar.setTitle(dateText);
                 String catText = cursor.getString(6);

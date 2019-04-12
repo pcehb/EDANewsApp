@@ -1,9 +1,12 @@
 package uk.ac.kent.pceh3.miniproject.ui;
 
+import android.app.AlertDialog;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -11,8 +14,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,10 +39,12 @@ import static uk.ac.kent.pceh3.miniproject.network.SavedArticlesDB.SAVED_TABLE_N
 public class SavedFragment extends Fragment {
     private RecyclerView feedListView;
     private LinearLayoutManager layoutManager;
+    private GridLayoutManager gridLayoutManager;
     private SavedAdapter adapter;
     private String articleUrl;
     private ProgressBar progressBar;
     private RecyclerView recyclerView;
+    AlertDialog.Builder builder;
 
     public SavedFragment() {
         // Required empty public constructor
@@ -57,33 +64,52 @@ public class SavedFragment extends Fragment {
         progressBar.setVisibility(View.GONE);
         feedListView = (RecyclerView) view.findViewById(R.id.feed_list_view);
         layoutManager = new LinearLayoutManager(getActivity());
+        gridLayoutManager = new GridLayoutManager(getActivity(), 2);
         feedListView.setLayoutManager(layoutManager);
 
-        DividerItemDecoration divider = new DividerItemDecoration(getActivity(), layoutManager.getOrientation());
-        feedListView.addItemDecoration(divider);
+        int orientation = getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // In landscape
+            feedListView.setLayoutManager(gridLayoutManager);
+
+
+        } else {
+            // In portrait
+            feedListView.setLayoutManager(layoutManager);
+        }
 
         recyclerView = (RecyclerView) view.findViewById(R.id.feed_list_view);
+        feedListView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+        feedListView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.HORIZONTAL));
 
         readFromDB();
 
         return view;
     }
 
-    private void readFromDB() {
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if (getActivity() != null) {
+            readFromDB();
+        }
+    }
+
+    public void readFromDB() {
 
         SQLiteDatabase database = new SavedArticlesDB(getContext()).getReadableDatabase();
 
         Cursor cursor = database.rawQuery("select * from " + SAVED_TABLE_NAME,null);
 
-        feedListView.setAdapter(new SavedAdapter(getContext(), cursor, listItemClickListener));
-        adapter = new SavedAdapter(getContext(), cursor, listItemClickListener);
+        feedListView.setAdapter(new SavedAdapter(getContext(), cursor, listItemClickListener, listLongItemClickListener));
+        adapter = new SavedAdapter(getContext(), cursor, listItemClickListener, listLongItemClickListener);
     }
 
 
     private View.OnClickListener listItemClickListener = new View.OnClickListener(){
         @Override
         public void onClick(View v) {
-            int position = (int) v.getTag();
 
             TextView url = v.findViewById(R.id.url);
             articleUrl = url.getText().toString();
@@ -97,6 +123,39 @@ public class SavedFragment extends Fragment {
 
     };
 
+    private View.OnLongClickListener listLongItemClickListener = new View.OnLongClickListener(){
+        @Override
+        public boolean onLongClick(final View v)
+        {
+
+            builder = new AlertDialog.Builder(getContext());
+
+            builder.setMessage("Do you want to remove this article from your saved list??")
+                    .setCancelable(false)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            TextView url = v.findViewById(R.id.url);
+                            articleUrl = url.getText().toString();
+                            SQLiteDatabase database = new SavedArticlesDB(getContext()).getReadableDatabase();
+                            database.delete(SavedArticlesDB.SAVED_TABLE_NAME, SavedArticlesDB.SAVED_COLUMN_URL +"=?", new String[] {articleUrl});
+                            readFromDB();
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            //  Action for 'NO' Button
+                            dialog.cancel();
+
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.setTitle("Delete");
+            alert.show();
+
+            return true;
+        }
+
+    };
 
 
 }
