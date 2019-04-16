@@ -55,7 +55,6 @@ The School has several visiting industrial professors who contribute to the stro
     <string name="research_quality">97% of research at Kent was found to be of international quality in the most recent research rankings (REF 2014).</string>
     <string name="about">The School of Engineering and Digital Arts successfully combines modern engineering and technology with the exciting field of digital media – a blend of expertise that is particularly well suited to the needs of 21st-century business.</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="transition">transit</string>
 
 </resources>

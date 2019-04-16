@@ -79,16 +79,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 coordinatorLayout1 = (CoordinatorLayout) findViewById(R.id.activity_main);
-                viewPager.setCurrentItem(0, true);
 
-                int pos = viewPager.getCurrentItem();
-                final Fragment activeFragment = adapter.getItem(pos);
 
-                if(pos == 0){
                     //instantiate the popup.xml layout file
                     LayoutInflater layoutInflater = (LayoutInflater) MainActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     final View customView = layoutInflater.inflate(R.layout.search_popup,null);
 
+                viewPager.setCurrentItem(0, true);
+
+                int pos = viewPager.getCurrentItem();
+                final Fragment activeFragment = adapter.getItem(pos);
 
                     closePopupBtn = (Button) customView.findViewById(R.id.closePopupBtn);
 
@@ -148,6 +148,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
 
+
+
                     //close the popup window on button click
                     closePopupBtn.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -160,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
                             popupWindow.dismiss();
                         }
                     });
-                }
+
                 return true;
             }
         });

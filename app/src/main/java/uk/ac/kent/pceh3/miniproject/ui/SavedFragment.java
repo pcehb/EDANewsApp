@@ -1,5 +1,6 @@
 package uk.ac.kent.pceh3.miniproject.ui;
 
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.Observer;
@@ -18,6 +19,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -126,7 +128,7 @@ public class SavedFragment extends Fragment {
             Intent intent = new Intent(getActivity(), DetailsActivity.class);
             intent.putExtra("articleUrl", articleUrl);
 
-            startActivity(intent);
+            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
 
         }
 
@@ -139,7 +141,7 @@ public class SavedFragment extends Fragment {
 
             builder = new AlertDialog.Builder(getContext());
 
-            builder.setMessage("Do you want to remove this article from your saved list??")
+            builder.setMessage("Do you want to remove this article from your saved list?")
                     .setCancelable(false)
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {

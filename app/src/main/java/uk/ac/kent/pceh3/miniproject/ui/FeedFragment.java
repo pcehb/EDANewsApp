@@ -1,5 +1,6 @@
 package uk.ac.kent.pceh3.miniproject.ui;
 
+import android.app.ActivityOptions;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
@@ -82,7 +83,7 @@ public class FeedFragment extends Fragment {
             Intent intent = new Intent(getActivity(), DetailsActivity.class);
             intent.putExtra("articleUrl", articleUrl);
 
-            startActivity(intent);
+            startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity()).toBundle());
         }
     };
 
@@ -201,7 +202,6 @@ public class FeedFragment extends Fragment {
 
     private boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-
         if (cm.getActiveNetworkInfo() != null){
             noImages.setVisibility(View.GONE);
         }

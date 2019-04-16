@@ -75,7 +75,7 @@
                 android:layout_weight="1"
                 android:padding="@dimen/activity_horizontal_margin"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                android:textSize="20sp" />
+                android:textSize="20sp"/>
 
             <TextView
                 android:id="@+id/article_desc"

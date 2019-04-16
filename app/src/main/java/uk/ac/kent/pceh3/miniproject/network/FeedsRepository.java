@@ -77,7 +77,7 @@ public class FeedsRepository {
             }
             @Override
             public void onFailure(Call<Feed> call, Throwable t) {
-                System.out.println(t.getMessage());
+                System.out.println("on failure " + t.getMessage());
                 networkStatus.setValue(NetworkStatus.IDLE);
             // Handle failure
             }

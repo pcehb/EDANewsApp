@@ -42,8 +42,6 @@ public class SavedAdapter extends RecyclerView.Adapter<SavedAdapter.ViewHolder> 
         private TextView desc;
         private TextView date;
         private TextView url;
-
-
         private VerticalScrollParallaxImageView photo;
 
         public ViewHolder(View itemView) {
